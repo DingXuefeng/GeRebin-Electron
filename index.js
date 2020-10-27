@@ -1,17 +1,8 @@
 'use strict';
 const path = require('path');
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 /// const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
-const unhandled = require('electron-unhandled');
-const debug = require('electron-debug');
-const contextMenu = require('electron-context-menu');
-const config = require('./config');
-const menu = require('./menu');
-
-unhandled();
-debug();
-contextMenu();
 
 // Note: Must match `build.appId` in package.json
 app.setAppUserModelId('com.company.AppName');
@@ -34,8 +25,12 @@ const createMainWindow = async () => {
 	const win = new BrowserWindow({
 		title: app.name,
 		show: false,
-		width: 600,
-		height: 400
+		width: 400,
+		height: 300,
+      webPreferences: {
+        contextIsolation: true, // protect against prototype pollution
+        preload: path.join(__dirname, 'preload.js')
+      }
 	});
 
 	win.on('ready-to-show', () => {
@@ -82,9 +77,23 @@ app.on('activate', async () => {
 
 (async () => {
 	await app.whenReady();
-	Menu.setApplicationMenu(menu);
 	mainWindow = await createMainWindow();
-
-	const favoriteAnimal = config.get('favoriteAnimal');
-	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'Your favorite animal is ${favoriteAnimal}'`);
 })();
+
+//import { resample } from './resample.js'
+const { resample } = require('./resample');
+const fs = require('fs');
+
+ipcMain.on("toMain", (event, args) => {
+  let out = resample(args.data,args.mca,args.outConfig);
+  var outFileName = path.join(__dirname, args.name.split('.')[0]+'.dat')
+  console.log(args);
+  mainWindow.webContents.send("fromMain", {
+    "message": `${outFileName}) data<${args.data.length}> mca<${args.mca}> config<N:${args.outConfig.N}, dE:${args.outConfig.dE}>`, 
+    "data": out,
+  });
+  fs.writeFile(outFileName,out.map(x=>x+' '+Math.sqrt(x)).join('\n'),(err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+});

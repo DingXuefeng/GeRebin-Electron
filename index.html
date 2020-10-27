@@ -1,18 +1,25 @@
 <!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>Electron boilerplate</title>
-		<link rel="stylesheet" href="index.css">
-	</head>
-	<body>
-		<div class="container">
-			<header>
-				<h1>Electron boilerplate</h1>
-				<p></p>
-			</header>
-			<section class="main"></section>
-			<footer></footer>
-		</div>
-	</body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://code.jquery.com">
+
+    <title>GeHPC Rebinner</title>
+
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h1>Select files to be processed</h1>
+    <input type="file" id="inputFiles" multiple><br />
+    <label for="N">output N bins</label>
+    <input type="text" id="N" value="10000"><br />
+    <label for="dE">output ΔE (keV)</label>
+    <input type="text" id="dE" value="1"><br />
+    <button type='button' id='process'>Start!</button>
+    <ul id='output-log'>
+    </ul>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src=process.js></script>
+  </body>
 </html>

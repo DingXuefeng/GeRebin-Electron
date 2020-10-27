@@ -1,4 +1,5 @@
 {
+    "type": "module",
 	"name": "app-name",
 	"productName": "App Name",
 	"version": "0.0.0",
@@ -25,7 +26,8 @@
 		"electron-store": "^5.1.0",
 		"electron-unhandled": "^3.0.0",
 		"electron-updater": "^4.0.6",
-		"electron-util": "^0.13.0"
+		"electron-util": "^0.13.0",
+		"jquery": "^3.5.1"
 	},
 	"devDependencies": {
 		"electron": "^7.1.1",
