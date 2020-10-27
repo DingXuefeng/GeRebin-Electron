@@ -1,7 +1,7 @@
 body {
 	position: absolute;
 	width: 380px;
-	text-align: center;
+	text-align: left;
 }
 
 input,button,.button {
@@ -10,7 +10,7 @@ input,button,.button {
 
 #output-log {
   overflow: scroll;
-  height: 65px;
+  height: 122px;
   border: 1px solid green;
   font-size: 10px;
   margin: auto;

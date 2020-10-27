@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
-let validSendChannels = ["toMain"];
-let validReceiveChannels = ["fromMain"];
+let validSendChannels = ["toMain","toMain-outputFolder"];
+let validReceiveChannels = ["fromMain","fromMain-outputFolder"];
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object

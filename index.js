@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, dialog,BrowserWindow, ipcMain} = require('electron');
 /// const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
 
@@ -84,12 +84,26 @@ app.on('activate', async () => {
 const { resample } = require('./resample');
 const fs = require('fs');
 
+ipcMain.on("toMain-outputFolder", (event, args) => {
+  dialog.showOpenDialog(mainWindow, {
+    title: 'output destination',
+    defaultPath : __dirname,
+    properties: ['openDirectory'],
+  }).then(result => {
+    console.log(result.canceled)
+    console.log(result.filePaths)
+    if(!result.canceled) mainWindow.webContents.send("fromMain-outputFolder", result.filePaths[0]);
+  }).catch((e) => { console.error(e.message) });
+});
+
 ipcMain.on("toMain", (event, args) => {
-  let out = resample(args.data,args.mca,args.outConfig);
-  var outFileName = path.join(__dirname, args.name.split('.')[0]+'.dat')
   console.log(args);
+
+  let out = resample(args.data,args.mca,args.outConfig);
+  var outFileName = path.join((args.path=='??')?__dirname:args.path, args.name.split('.')[0]+'.dat')
+
   mainWindow.webContents.send("fromMain", {
-    "message": `${outFileName}) data<${args.data.length}> mca<${args.mca}> config<N:${args.outConfig.N}, dE:${args.outConfig.dE}>`, 
+    "message": `${outFileName} data<${args.data.length}> mca<${args.mca}> config<N:${args.outConfig.N}, dE:${args.outConfig.dE}>`, 
     "data": out,
   });
   fs.writeFile(outFileName,out.map(x=>x+' '+Math.sqrt(x)).join('\n'),(err) => {

@@ -3,6 +3,10 @@ window.api.receive("fromMain", (msg) => {
   console.log(msg.message.replace(/</g,"&lt").replace(/>/g,"&gt"));
   $("#output-log").append(`<li><span class="red">${msg.message.replace(/</g,"&lt").replace(/>/g,"&gt")}<span><span class="green">${msg.data.slice(200,205)}</span></li>`);
 })
+window.api.receive("fromMain-outputFolder", (msg) => {
+  $('#outputFolder').text(msg);
+  startProcessing();
+})
 function process() {
   var lines = this.result.split('\n');
   var i = 0;
@@ -17,20 +21,25 @@ function process() {
     if(lines[i]=='$MCA_CAL:') { i1 = i; break; }
   }
   var mca = lines[i+2].split(' ').slice(0,3).map(x => parseFloat(x));
-  window.api.send('toMain', {'name':this.name,'data':data,'mca':mca,'outConfig':this.outConfig}) //eg placed in your onclick
+  window.api.send('toMain', {'path':this.outConfig.path,'name':this.name,'data':data,'mca':mca,'outConfig':this.outConfig}) //eg placed in your onclick
 }
 
 function startProcessing() {
-  for (file of $('#inputFiles').prop('files')) {
-    console.log(`processing <${file.name}>`);
-    var fr = new FileReader();
-    fr.name = file.name;
-    fr.outConfig = { 
-      'N':parseInt($('#N').val()),
-      'dE':parseFloat($('#dE').val()),
-    };
-    fr.onload = process;
-    fr.readAsText(file);
+  if($('#outputFolder').text()=='??') {
+    window.api.send('toMain-outputFolder');
+  } else {
+    for (file of $('#inputFiles').prop('files')) {
+      console.log(`processing <${file.name}>`);
+      var fr = new FileReader();
+      fr.name = file.name;
+      fr.outConfig = { 
+        'path':$('#outputFolder').text(),
+        'N':parseInt($('#N').val()),
+        'dE':parseFloat($('#dE').val()),
+      };
+      fr.onload = process;
+      fr.readAsText(file);
+    }
   }
 }
 $(function() { $("button#process").click(startProcessing); });
