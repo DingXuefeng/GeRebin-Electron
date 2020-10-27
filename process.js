@@ -25,7 +25,7 @@ function process() {
 }
 
 function startProcessing() {
-  if($('#outputFolder').text()=='??') {
+  if($('#outputFolder').text()=='Output Folder') {
     window.api.send('toMain-outputFolder');
   } else {
     for (file of $('#inputFiles').prop('files')) {
@@ -42,4 +42,7 @@ function startProcessing() {
     }
   }
 }
-$(function() { $("button#process").click(startProcessing); });
+$(function() { 
+  $("button#process").click(startProcessing); 
+  $("button#outputFolder").click(()=>{window.api.send('toMain-outputFolder');});
+});

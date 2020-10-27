@@ -100,7 +100,7 @@ ipcMain.on("toMain", (event, args) => {
   console.log(args);
 
   let out = resample(args.data,args.mca,args.outConfig);
-  var outFileName = path.join((args.path=='??')?__dirname:args.path, args.name.split('.')[0]+'.dat')
+  var outFileName = path.join((args.path=='Output Folder')?__dirname:args.path, args.name.split('.')[0]+'.dat')
 
   mainWindow.webContents.send("fromMain", {
     "message": `${outFileName} data<${args.data.length}> mca<${args.mca}> config<N:${args.outConfig.N}, dE:${args.outConfig.dE}>`, 
